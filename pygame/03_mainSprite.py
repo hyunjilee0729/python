@@ -16,25 +16,9 @@ character = pygame.image.load("pygame/source/character.png")
 character_size = character.get_rect().size
 character_width = character_size[0]
 character_height = character_size[1]
-# character_xPos = (screen_width / 2) - (character_width / 2)
-# character_yPos = screen_height - character_height
-#1
-# character_xPos = 0
-# character_yPos = 0
-#2
-character_xPos = (screen_width / ) - (character_width / )
-character_yPos = 0
 
-# #3
-# character_xPos = (screen_width / 100) - (character_width / 100)
-# character_yPos = screen_height - character_height
-#4
-# character_xPos = (screen_width / 2) - (character_width / 2)
-# character_yPos = 0  
-
-# #5
-# character_xPos = 
-# character_yPos = 
+character_xPos = (screen_width / 2) - (character_width / 2)
+character_yPos = screen_height - character_height
 
 running = True
 while running:
