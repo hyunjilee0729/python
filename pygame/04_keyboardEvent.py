@@ -41,7 +41,7 @@ while running:
                 to_x = 0
             elif event.key == pygame.K_w or event.key == pygame.K_s:
                 to_y = 0
-                
+
 
     character_xPos += to_x
     character_yPos += to_y
@@ -57,7 +57,7 @@ while running:
         character_yPos = screen_height - character_height
 
         
-            # print("ㅈ...ㅜㄱ...ㅇ ㅕ.....ㅈ..ㅝ...") 
+            # print("2022년.4월.22일. 신서윤 사망. 사인, 증오의 매") 
     screen.blit(bg, (0, 0))
     screen.blit(character, (character_xPos, character_yPos))
     pygame.display.update()
