@@ -170,6 +170,7 @@ while running:
     #     running = False
 
             # print("2022년.4월.22일. 신서윤 사망. 사인, 증오의 매") 
+            # print("2022년.5월.27일. 신서윤 사망. 사인, 코로나 걸림")
     screen.blit(bg, (0, 0))
     screen.blit(character, (character_xPos, character_yPos))
     screen.blit(enemy1, (enemy1_xPos, enemy1_yPos))
