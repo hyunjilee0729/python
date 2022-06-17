@@ -61,7 +61,7 @@ while running:
             pass
         
     screen.fill((0, 0, 0))
-    screen.blit(character, (character_xPos - character_width / 2, character_Ypos - character_height / 2))
+    screen.blit(character, (character_xPos - character_width / 2, character_yPos - character_height / 2))
 
     pygame.display.update()
 
