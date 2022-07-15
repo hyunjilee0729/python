@@ -120,6 +120,4 @@ while running:
     screen.blit(ball, (ball_xPos, ball_yPos))
     pygame.display.update()
 
-
-
 pygame.quit()
