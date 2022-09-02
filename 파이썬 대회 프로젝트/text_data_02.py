@@ -57,17 +57,17 @@ woman2_texts8 = [q8, sel8, result8, score8]
 q9 = ["생일 파티를 가야하는데 엄마가 학원을 안 빼주심", "당신의 선택은?"]
 sel9 = ["학원을 째고 간다", "수업을 듣고 늦게 간다", "안 간다", "수업 도중에 나온다"]
 result9 = ["뭐야 너 학원 쨌냐? 선생님께 이른다 ㅅㄱ", "아제 왔네, 너 기다렸어", "너 왜 안왔냐?", "늦었네?"]
-score9 = [0, 2, -2, -0]
+score9 = [0, 2, -2, 0]
 
 woman2_texts9 = [q9, sel9, result9, score9]
 
 q10 = ["그 애가 나에게 우리반에 좋아하는 사람이 있냐고 묻는다", "당신의 선택은?"]
 sel10 = ["있어, 복싱 잘하는 그런 애", "없어", "비밀인데?", "응, 나 사실 남자 좋아해"]
 result10 = ["와.. 누군지 몰라도 좋겠네~", "아.. 그래..?", "뭐야, 싱겁게,,", "아,, 그래, 뭐 그럴 수도 있지.."]
-score10 = [2, -2, 0, -0]
+score10 = [2, -2, 0, 0]
 
 woman2_texts10 = [q10, sel10, result10, score10]
 
 
 
-question_02 = [woman2_texts1, woman2_texts2, woman2_texts3, woman2_texts4, woman2_texts5, woman2_texts6, woman2_texts7, woman2_texts8, woman2_texts9, woman2_texts10]
+questions_02 = [woman2_texts1, woman2_texts2, woman2_texts3, woman2_texts4, woman2_texts5, woman2_texts6, woman2_texts7, woman2_texts8, woman2_texts9, woman2_texts10]
