@@ -15,12 +15,15 @@ time.sleep(1)
 
 soup = BeautifulSoup(browser.page_source, "lxml")
 
-top3 = soup.find("ul", attrs = {"class" : "TripleRecommendList__triple_recommend_list--vm8_k"})
-t3_title = top3.findAll("span", attrs = {"class" : "ContentTitle__title--e3qXt"})
-t3_author = top3.findAll("a", attrs = {"class" : "ContentAuthor__author--CTAAP"})
+top3 = soup.find("ul", attrs = {"class" : "ContentList__content_list--q5KXY"})
+title = top3.findAll("span", attrs = {"class" : "ContentTitle__title--e3qXt"})
+author = top3.findAll("a", attrs = {"class" : "ContentAuthor__author--CTAAP"})
+rate = top3.findAll("span", attrs = {"class" : "Rating__star_area--dFzsb"})
 
-for i in range(len(t3_title)):
-    print(f"{i+1}순위 웹툰 제목 : {t3_title[i].text} / 작가 : {t3_author[i].text}")
+print("----------금요웹툰 20개----------")
+
+# print(len(title), len(author), len(rate))
+for i in range(len(title))[:20]:
+    print(f"{i+1} - {title[i].text} || {author[i].text} || {rate[i].text}")
 # for j in top3[:10]:
 #     print(j.text)
-
