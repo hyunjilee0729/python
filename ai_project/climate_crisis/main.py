@@ -5,6 +5,20 @@ import os
 # 파이게임 초기화
 pygame.init()
 
+# ... (기존 코드)
+
+# 한글 폰트 설정
+font_path = os.path.join("ai_project", "climate_crisis", "font1.ttf")
+font_size = 26
+
+# 폰트 초기화
+pygame.font.init()
+font = pygame.font.Font(font_path, font_size)
+
+# ... (이하 생략)
+
+import os
+
 # 창 크기 설정
 window_width = 1200
 window_height = 700
@@ -27,22 +41,26 @@ extra_image = pygame.image.load(extra_image_path)
 extra_image_rect = extra_image.get_rect()
 extra_image_rect.topleft = (20, 170)
 
-# 한글 폰트 설정
-font_path = os.path.join("ai_project", "climate_crisis", "font1.ttf")
-font_size = 26  # 글씨 크기를 10만 줄임
-font = pygame.font.Font(font_path, font_size)
+# 새로운 추가 이미지 로드
+new_extra_image_path = os.path.join("ai_project", "climate_crisis", "image", "menu.png")
+
+
 
 # 텍스트 관리를 위한 클래스
 class Text:
-    def __init__(self, content, background_change=False, next_background=None, remove_extra_image=False):
+    def __init__(self, content, background_change=False, next_background=None, remove_extra_image=False,
+                 show_extra_image=False, new_extra_image=None, new_extra_image_on_click=False):
         self.content = content
         self.surface = font.render(self.content, True, (255, 255, 255))
         self.rect = self.surface.get_rect()
         self.background_change = background_change
         self.next_background = next_background
         self.remove_extra_image = remove_extra_image
+        self.show_extra_image = show_extra_image
+        self.new_extra_image = new_extra_image
+        self.new_extra_image_on_click = new_extra_image_on_click
 
-# 초기 텍스트 리스트 생성
+        # 초기 텍스트 리스트 생성
 texts = [
     Text("안녕!! 내 이름은 자연이야^^"),
     Text("나는 산림을 너무 좋아해서 매주 산림에서 놀아~"),
@@ -57,14 +75,7 @@ texts = [
     Text("안 되겠다..! 산림인 자연님이 직접 나서서 산림을 지켜야겠어!"),
     Text("뭐? 나를 도와주겠다구??"),
     Text("너~무 좋지~! 산림도 분명 너에게 고마워할거야!"),
-    Text("그럼, 산림을 지키러 고고~~", remove_extra_image=True),
-    Text("산림파괴인을 잡아라!"),
-    Text("1. 앞에 지나가는 산림파괴인들을 잡으세요!"),
-    Text("2. 해당 시간동안 제안 되어있는 산림파괴인들을 다 잡으면 성공!"),
-    Text("3. 난이도는 총 3단계! 난이도가 올라갈수록 더욱 강력한 산림파괴인들이 나타납니다!"),
-    Text("4. 기회는 총 3번입니다!"),
-    Text("*주의* 가끔 지나가는 산림보호인들을 잡으면 생명이 감소됩니다!")
-]
+     Text("그럼, 산림을 지키러 고고~~", remove_extra_image=True, new_extra_image=new_extra_image_path),]
 
 # 현재 텍스트 인덱스
 current_text_index = 0
@@ -72,6 +83,11 @@ current_text_index = 0
 # 이전 배경 저장 변수
 previous_background = None
 previous_background_rect = None
+
+# 추가 이미지 저장 변수
+current_extra_image = extra_image
+
+# ... (기존 코드)
 
 # 게임 루프
 while True:
@@ -98,11 +114,23 @@ while True:
                 if texts[current_text_index].remove_extra_image:
                     extra_image_rect.topleft = (window_width, window_height)  # 화면 밖으로 이동하여 숨기기
 
+                if texts[current_text_index].show_extra_image:
+                    extra_image_rect.topleft = (20, 170)  # 추가 이미지 표시 위치로 이동
+
+                if texts[current_text_index].new_extra_image:
+                    # 새로운 추가 이미지를 표시
+                    new_extra_image = pygame.image.load(texts[current_text_index].new_extra_image)
+                    new_extra_image_rect = new_extra_image.get_rect(center=(window_width // 2, window_height // 2))
+    
     # 배경 그리기
     screen.blit(current_background, background_rect)
 
     # 추가 이미지 그리기
     screen.blit(extra_image, extra_image_rect)
+
+    # 새로운 추가 이미지 그리기
+    if texts[current_text_index].new_extra_image:
+        screen.blit(new_extra_image, new_extra_image_rect)
 
     # 현재 텍스트 그리기 (맨아래 가운데에 위치)
     texts[current_text_index].rect.midbottom = (window_width // 2, window_height)
