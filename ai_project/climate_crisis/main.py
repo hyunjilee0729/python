@@ -41,6 +41,16 @@ extra_image = pygame.image.load(extra_image_path)
 extra_image_rect = extra_image.get_rect()
 extra_image_rect.topleft = (20, 170)
 
+# 특정 캐릭터 이미지 로드
+character_image_path = os.path.join("ai_project", "climate_crisis", "image", "character.png")
+character_image = pygame.image.load(character_image_path)
+character_rect = character_image.get_rect()
+character_rect.topleft = (500, 500)  # 캐릭터 초기 위치
+
+# 게임 루프 내에서 캐릭터를 그리는 부분에 추가
+screen.blit(character_image, character_rect)
+
+
 # 새로운 추가 이미지 로드
 new_extra_image_path = os.path.join("ai_project", "climate_crisis", "image", "menu.png")
 
@@ -90,6 +100,23 @@ current_extra_image = extra_image
 # ... (기존 코드)
 
 # 게임 루프
+
+# 게임 루프 내에서 이벤트 처리 부분에 추가
+for event in pygame.event.get():
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        mouse_pos = pygame.mouse.get_pos()
+        if character_rect.collidepoint(mouse_pos):
+            print("Character caught!")  # 캐릭터가 클릭되었을 때 수행할 동작 추가
+
+# 게임 루프# 게임 루프
+# 게임 루프
+show_new_extra_image = True  # 새로운 추가 이미지를 표시할지 여부
+game_start_time = 0  # 게임 시작 시간 초기화
+new_extra_image = None  # 새로운 추가 이미지 객체 초기화
+new_extra_image_rect = None  # 새로운 추가 이미지의 rect 초기화
+
+clock = pygame.time.Clock()  # pygame Clock 객체 생성
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -98,11 +125,7 @@ while True:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # 화면 클릭 시 다음 텍스트로 넘어가기
             current_text_index += 1
-            if current_text_index >= len(texts):
-                # 텍스트가 모두 표시되면 게임 종료
-                pygame.quit()
-                sys.exit()
-            else:
+            if current_text_index < len(texts):
                 # 현재 텍스트가 배경 변경을 요청하거나 추가 이미지를 삭제해야 하는 경우
                 if texts[current_text_index].background_change:
                     previous_background = current_background
@@ -117,11 +140,22 @@ while True:
                 if texts[current_text_index].show_extra_image:
                     extra_image_rect.topleft = (20, 170)  # 추가 이미지 표시 위치로 이동
 
-                if texts[current_text_index].new_extra_image:
+                if texts[current_text_index].new_extra_image and not show_new_extra_image:
                     # 새로운 추가 이미지를 표시
-                    new_extra_image = pygame.image.load(texts[current_text_index].new_extra_image)
+                    new_extra_image_path = os.path.join("ai_project", "climate_crisis", "image", "menu.png")
+                    new_extra_image = pygame.image.load(new_extra_image_path)
                     new_extra_image_rect = new_extra_image.get_rect(center=(window_width // 2, window_height // 2))
-    
+                    show_new_extra_image = True  # 새로운 추가 이미지가 표시된 후에는 True로 설정
+                    game_start_time = pygame.time.get_ticks()  # 게임 시작 시간 기록
+
+    # 게임이 시작되었는지 여부에 따라 제한 시간을 확인
+    if show_new_extra_image:
+        elapsed_time = (pygame.time.get_ticks() - game_start_time) // 1000  # 경과 시간(초)
+        if elapsed_time >= 30:  # 제한 시간 30초
+            print("Game Over!")
+            pygame.quit()
+            sys.exit()
+
     # 배경 그리기
     screen.blit(current_background, background_rect)
 
@@ -129,11 +163,18 @@ while True:
     screen.blit(extra_image, extra_image_rect)
 
     # 새로운 추가 이미지 그리기
-    if texts[current_text_index].new_extra_image:
+    if current_text_index < len(texts) and texts[current_text_index].new_extra_image and show_new_extra_image and new_extra_image is not None:
         screen.blit(new_extra_image, new_extra_image_rect)
 
     # 현재 텍스트 그리기 (맨아래 가운데에 위치)
-    texts[current_text_index].rect.midbottom = (window_width // 2, window_height)
-    screen.blit(texts[current_text_index].surface, texts[current_text_index].rect)
+    if current_text_index < len(texts):
+        texts[current_text_index].rect.midbottom = (window_width // 2, window_height)
+        screen.blit(texts[current_text_index].surface, texts[current_text_index].rect)
+
+    # 시간 표시
+    font_time = pygame.font.SysFont(None, 36)
+    time_text = font_time.render(f"Time: {elapsed_time}s", True, (255, 255, 255))
+    screen.blit(time_text, (10, 10))
 
     pygame.display.flip()
+    clock.tick(60)  # 60 FPS로 설정
