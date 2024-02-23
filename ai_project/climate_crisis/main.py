@@ -1,6 +1,7 @@
 import pygame
 import sys
 import os
+import random
 
 # 파이게임 초기화
 pygame.init()
@@ -49,8 +50,29 @@ character_image = pygame.image.load(character_image_path)
 
 # 이미지 위치 설정
 character_rect = character_image.get_rect()
-character_rect.topleft = (100, 100)  # 원하는 위치로 조절
+character_rect.topleft = (750, 100)  # 원하는 위치로 조절
 
+# 추가한 부분: 원의 위치, 크기, 색상, 생성 시간 정보를 저장하는 클래스
+class Circle:
+    def __init__(self, pos, radius, color, spawn_time):
+        self.pos = pos
+        self.radius = radius
+        self.color = color
+        self.spawn_time = spawn_time
+
+# 추가한 부분: 원의 위치와 색상 설정
+circle1_pos = (800, 150)
+circle2_pos = (850, 200)
+circle_radius = 30
+circle_color = (255, 0, 0)  # 빨간색
+
+
+# 추가한 부분: 원의 위치와 색상 설정
+circles = []  # 여러 개의 원을 관리할 리스트
+
+game_start_time = pygame.time.get_ticks()  # 게임 시작 시간 초기화
+spawn_interval = random.uniform(0.3, 0.7)  # 원이 생성되는 간격 (0.3에서 0.7초 사이)
+circle_lifetime = 2  # 원의 수명 (초)
 
 
 # 새로운 추가 이미지 로드
@@ -112,16 +134,48 @@ for event in pygame.event.get():
         if character_rect.collidepoint(mouse_pos):
             print("Character caught!")  # 캐릭터가 클릭되었을 때 수행할 동작 추가
 
-# 게임 루프
-show_new_extra_image = False  # 새로운 추가 이미지를 표시할지 여부
-game_duration = 60  # 게임 지속 시간 (초)
-game_start_time = 0  # 게임 시작 시간 초기화
-new_extra_image = None  # 새로운 추가 이미지 객체 초기화
-new_extra_image_rect = None  # 새로운 추가 이미지의 rect 초기화
 
-clock = pygame.time.Clock()  # pygame Clock 객체 생성
+# 원을 저장할 클래스
+class Circle:
+    def __init__(self, x, y, radius, color):
+        self.x = x
+        self.y = y
+        self.radius = radius
+        self.color = color
+
+# 게임 루프
+show_new_extra_image = False
+game_duration = 60
+game_start_time = 0
+new_extra_image = None
+new_extra_image_rect = None
+circle_spawn_time = 0  # 소환된 시간을 저장할 변수'
+circles = []  # 원을 저장할 리스트
+
+clock = pygame.time.Clock()
+
 
 while True:
+    current_time = pygame.time.get_ticks()
+    elapsed_time = (current_time - game_start_time) / 1000  # 경과 시간(초)
+
+     # 원 생성 로직
+    if elapsed_time >= spawn_interval:
+        # 새로운 원 생성
+        circle_pos = (random.randint(100, 1100), random.randint(100, 600))
+        circle_radius = random.randint(10, 15)  # 크기를 더 키움
+        circle_color = (255, 0, 0)  # 빨간색
+        new_circle = Circle(circle_pos, circle_radius, circle_color, current_time)
+        circles.append(new_circle)
+
+        # 다음 원이 생성되는 시간과 간격 설정
+        game_start_time = current_time
+        spawn_interval = random.uniform(1, 5)
+
+         # 다음 원이 생성되는 시간과 간격 설정
+        game_start_time = current_time
+        spawn_interval = random.uniform(0.3, 0.7)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -145,12 +199,13 @@ while True:
                     extra_image_rect.topleft = (20, 170)  # 추가 이미지 표시 위치로 이동
 
                 if texts[current_text_index].new_extra_image and not show_new_extra_image:
-                    # 새로운 추가 이미지를 표시
                     new_extra_image_path = os.path.join("ai_project", "climate_crisis", "image", "menu.png")
                     new_extra_image = pygame.image.load(new_extra_image_path)
                     new_extra_image_rect = new_extra_image.get_rect(center=(window_width // 2, window_height // 2))
-                    show_new_extra_image = True  # 새로운 추가 이미지가 표시된 후에는 True로 설정
-                    game_start_time = pygame.time.get_ticks()  # 게임 시작 시간 기록
+                    show_new_extra_image = True
+                    game_start_time = pygame.time.get_ticks()
+                    circle_spawn_time = pygame.time.get_ticks()  # 소환된 시간 초기화
+                    circles = []  # 원 리스트 초기화
                     
 
     # 게임이 시작되었는지 여부에 따라 남은 시간을 계산
@@ -171,6 +226,24 @@ while True:
     # 이미지 그리기
     screen.blit(character_image, character_rect)
 
+    # 추가한 부분: 원 그리기
+    pygame.draw.circle(screen, circle_color, circle1_pos, circle_radius)
+    pygame.draw.circle(screen, circle_color, circle2_pos, circle_radius)
+
+    
+     # 추가한 부분: 원 그리기 및 수명이 다 된 원 제거
+    circles_to_remove = []
+    for circle in circles:
+        pygame.draw.circle(screen, circle.color, circle.pos, circle.radius)
+
+        # 현재 시간과 원 생성 시간을 비교하여 수명이 다 된 원을 찾음
+        if current_time - circle.spawn_time >= circle_lifetime * 1000:
+            circles_to_remove.append(circle)
+
+    # 수명이 다 된 원 제거
+    for circle in circles_to_remove:
+        circles.remove(circle)
+
 
     # 새로운 추가 이미지 그리기
     if current_text_index < len(texts) and texts[current_text_index].new_extra_image and show_new_extra_image and new_extra_image is not None:
@@ -181,11 +254,30 @@ while True:
         texts[current_text_index].rect.midbottom = (window_width // 2, window_height)
         screen.blit(texts[current_text_index].surface, texts[current_text_index].rect)
 
+    
     # 시간 표시
     if show_new_extra_image:
         font_time = pygame.font.SysFont(None, 36)
         time_text = font_time.render(f"Time: {remaining_time}s", True, (255, 255, 255))
         screen.blit(time_text, (10, 10))
+
+    # 원 그리기
+    for circle in circles:
+        pygame.draw.circle(screen, circle.color, (circle.x, circle.y), circle.radius)
+
+    # 소환된 원들 중 2초가 지난 원은 삭제
+    circles = [circle for circle in circles if pygame.time.get_ticks() - circle_spawn_time < 2000]
+
+    # 소환된 원들의 소환 시간 체크 및 추가
+    if show_new_extra_image:
+        current_time = pygame.time.get_ticks()
+        if current_time - circle_spawn_time > random.randint(300, 700):  # 0.3초에서 0.7초 사이의 랜덤한 시간
+            x = character_rect.x
+            y = character_rect.y + character_rect.height // 2  # y값만 변하도록 설정
+            radius = random.randint(20, 30)  # 원의 크기를 랜덤으로 설정
+            color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))  # 랜덤한 색상
+            circles.append(Circle(x, y, radius, color))
+            circle_spawn_time = current_time  # 소환된 시간 갱신
 
     pygame.display.flip()
     clock.tick(60)  # 60 FPS로 설정
